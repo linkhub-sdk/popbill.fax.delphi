@@ -1,4 +1,4 @@
 popbill.fax.delphi
 ========================
 
-팝빌 메시징 SDK for Delphi
+팝빌 팩스 SDK for Delphi
