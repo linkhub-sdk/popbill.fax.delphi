@@ -1,7 +1,7 @@
 (*
 *=================================================================================
-* Unit for base module for Popbill Messaging API SDK. Main functionality is to
-* send Short Messaging To Cell phones. Also LMS and MMS.
+* Unit for base module for Popbill FAX API SDK. Main functionality is to
+* send FAX with document file.( ex. pdf, doc, xls, hwp etc.)
 *
 * This module uses synapse library.( http://www.ararat.cz/synapse/doku.php/ )
 * It's full open source library, free to use include commercial application.
@@ -18,7 +18,7 @@
 *
 * http://www.popbill.com
 * Author : Kim Seongjun (pallet027@gmail.com)
-* Written : 2014-04-01
+* Written : 2014-04-08
 
 * Thanks for your interest. 
 *=================================================================================
@@ -167,7 +167,9 @@ begin
        try
                 responseJson := httppost('/FAX',CorpNum,UserID,requestJson,files);
        finally
-                files[0].Data.Free;
+                for i:= 0 to Length(files) -1 do begin
+                        files[i].Data.Free;
+                end;
        end;
 
        result := getJSonString(responseJson,'receiptNum');
