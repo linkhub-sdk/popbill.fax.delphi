@@ -80,6 +80,9 @@ type
                 //예약건 전송취소. 예약시간 10분 전까지만 가능.
                 function CancelReserve(CorpNum : String; receiptNum : string; UserID : String) : TResponse;
 
+                 //팩스관련 연결 url.
+                function GetURL(CorpNum : String; UserID : String; TOGO : String) : String;
+
         end;
 implementation
 constructor TFaxService.Create(PartnerID : String; SecretKey : String);
@@ -231,5 +234,15 @@ begin
         result.code := getJSonInteger(responseJson,'code');
         result.message := getJSonString(responseJson,'message');
 end;
+
+
+function TFaxService.getURL(CorpNum : String; UserID : String; TOGO : String) : String;
+var
+        responseJson : String;
+begin
+        responseJson := httpget('/FAX/?TG=' + TOGO ,CorpNum,UserID);
+        result := getJSonString(responseJson,'url');
+end;
+
 //End of Unit;
 end.
