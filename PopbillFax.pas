@@ -61,7 +61,7 @@ type
 
         TFaxService = class(TPopbillBaseService)
         public
-                constructor Create(PartnerID : String; SecretKey : String);
+                constructor Create(LinkID : String; SecretKey : String);
 
                 //회원별 전송 단가 확인.
                 function GetUnitCost(CorpNum : String) : Single;
@@ -85,9 +85,9 @@ type
 
         end;
 implementation
-constructor TFaxService.Create(PartnerID : String; SecretKey : String);
+constructor TFaxService.Create(LinkID : String; SecretKey : String);
 begin
-       inherited Create(PartnerID,SecretKey);
+       inherited Create(LinkID,SecretKey);
        AddScope('160');
 end;
 
