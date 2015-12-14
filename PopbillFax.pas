@@ -227,12 +227,24 @@ function TFaxService.CancelReserve(CorpNum : String; receiptNum : string; UserID
 var
         responseJson : String;
 begin
-         if receiptNum = '' then raise EPopbillException.Create(-99999999,'No ReceiptNum');
+        if receiptNum = '' then raise EPopbillException.Create(-99999999,'No ReceiptNum');
 
-        responseJson := httpget('/FAX/' + receiptNum + '/Cancel',CorpNum,UserID);
+        try
+                responseJson := httpget('/FAX/' + receiptNum + '/Cancel',CorpNum,UserID);
 
-        result.code := getJSonInteger(responseJson,'code');
-        result.message := getJSonString(responseJson,'message');
+                result.code := getJSonInteger(responseJson,'code');
+                result.message := getJSonString(responseJson,'message');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.Message);
+                        end;
+
+                        result.code := le.code;
+                        result.message := le.Message;
+                end;
+        end;
 end;
 
 
