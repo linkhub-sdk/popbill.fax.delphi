@@ -59,6 +59,17 @@ type
 
         TFaxDetailList = Array Of TFaxDetail;
 
+        TFaxSearchList = class
+        public
+                code            :       Integer;
+                total           :       Integer;
+                perPage         :       Integer;
+                pageNum         :       Integer;
+                pageCount       :       Integer;
+                message         :       String;
+                list            :       TFaxDetailList;
+        end;
+
         TFaxService = class(TPopbillBaseService)
         public
                 constructor Create(LinkID : String; SecretKey : String);
@@ -83,6 +94,9 @@ type
                  //팩스관련 연결 url.
                 function GetURL(CorpNum : String; UserID : String; TOGO : String) : String;
 
+                //팩스 전송내역 조회
+                function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; UserID : String) : TFaxSearchList;
+
         end;
 implementation
 constructor TFaxService.Create(LinkID : String; SecretKey : String);
@@ -100,6 +114,84 @@ begin
         result := strToFloat(getJSonString( responseJson,'unitCost'));
 
 end;
+
+
+function TFaxService.Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; UserID : String) :TFaxSearchList;
+var
+        responseJson : String;
+        uri : String;
+        StateList : String;
+        jSons : ArrayOfString;
+        i : Integer;
+begin
+        for i := 0 to High(State) do
+        begin
+                if State[i] <> '' Then
+                begin
+                        if i = High(State) Then
+                        begin
+                                StateList := StateList + State[i];
+                        end
+                        else begin
+                                StateList := StateList + State[i] +',';
+                        end;
+                end
+        end;
+
+        uri := '/FAX/Search?SDate='+SDate+'&&EDate='+EDate;
+        uri := uri + '&&State='+ StateList;
+
+        if ReserveYN Then uri := uri + '&&ReserveYN=1'
+        else uri := uri + '&&ReserveYN=0';
+
+        if SenderOnly Then uri := uri + '&&SenderOnly=1'
+        else uri := uri + '&&SenderOnly=0';
+        
+        uri := uri + '&&Page=' + IntToStr(Page);
+        uri := uri + '&&PerPage=' + IntToSTr(PerPage);
+
+        responseJson :=  httpget(uri,CorpNum,UserID);
+
+        result := TFaxSearchList.Create;
+
+        result.code             := getJSonInteger(responseJson,'code');
+        result.total            := getJSonInteger(responseJson,'total');
+        result.perPage          := getJSonInteger(responseJson,'perPage');
+        result.pageNum          := getJSonInteger(responseJson,'pageNum');
+        result.pageCount        := getJSonInteger(responseJson,'pageCount');
+        result.message          := getJSonString(responseJson,'message');
+
+        try
+
+                jSons := getJSonList(responseJson,'list');
+                SetLength(result.list, Length(jSons));
+                for i:=0 to Length(jSons)-1 do
+                begin
+                        result.list[i] := TFaxDetail.Create();
+
+                        result.list[i].sendState := getJSonInteger(jsons[i],'sendState');
+                        result.list[i].convState := getJSonInteger(jsons[i],'convState');
+
+                        result.list[i].sendNum := getJSonString(jsons[i],'sendNum');
+                        result.list[i].receiveNum := getJSonString(jsons[i],'receiveNum');
+                        result.list[i].receiveName := getJSonString(jsons[i],'receiveName');
+
+                        result.list[i].sendPageCnt := getJSonInteger(jsons[i],'sendPageCnt');
+                        result.list[i].successPageCnt := getJSonInteger(jsons[i],'successPageCnt');
+                        result.list[i].failPageCnt := getJSonInteger(jsons[i],'failPageCnt');
+                        result.list[i].refundPageCnt := getJSonInteger(jsons[i],'refundPageCnt');
+                        result.list[i].cancelPageCnt := getJSonInteger(jsons[i],'cancelPageCnt');
+
+                        result.list[i].reserveDT := getJSonString(jsons[i],'reserveDT');
+                        result.list[i].sendDT := getJSonString(jsons[i],'sendDT');
+                        result.list[i].resultDT := getJSonString(jsons[i],'resultDT');
+                        result.list[i].sendResult := getJSonInteger(jsons[i],'sendResult');
+                end;
+        except on E:Exception do
+                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        end;
+end;
+
 
 function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String) : String;
 var
