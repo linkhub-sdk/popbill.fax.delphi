@@ -55,6 +55,7 @@ type
                 sendDT : String;
                 resultDT : String;
                 sendResult : Integer;
+                fileNames : ArrayOfString;
         end;
 
         TFaxDetailList = Array Of TFaxDetail;
@@ -186,6 +187,8 @@ begin
                         result.list[i].sendDT := getJSonString(jsons[i],'sendDT');
                         result.list[i].resultDT := getJSonString(jsons[i],'resultDT');
                         result.list[i].sendResult := getJSonInteger(jsons[i],'sendResult');
+                        result.list[i].fileNames := getJsonList(jsons[i],'fileNames');
+
                 end;
         except on E:Exception do
                 raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
@@ -305,8 +308,7 @@ begin
                         result[i].resultDT := getJSonString(jsons[i],'resultDT');
                         result[i].sendResult := getJSonInteger(jsons[i],'sendResult');
 
-
-
+                        result[i].fileNames := getJsonList(jsons[i],'fileNames');
                 end;
 
         except on E:Exception do
