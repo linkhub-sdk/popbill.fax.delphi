@@ -96,7 +96,7 @@ type
                 function GetURL(CorpNum : String; UserID : String; TOGO : String) : String;
 
                 //팩스 전송내역 조회
-                function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; UserID : String) : TFaxSearchList;
+                function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; UserID : String) : TFaxSearchList;
 
         end;
 implementation
@@ -117,7 +117,7 @@ begin
 end;
 
 
-function TFaxService.Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; UserID : String) :TFaxSearchList;
+function TFaxService.Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; Order : String; UserID : String) :TFaxSearchList;
 var
         responseJson : String;
         uri : String;
@@ -150,6 +150,7 @@ begin
         
         uri := uri + '&&Page=' + IntToStr(Page);
         uri := uri + '&&PerPage=' + IntToSTr(PerPage);
+        uri := uri + '&&Order=' + Order;
 
         responseJson :=  httpget(uri,CorpNum,UserID);
 
