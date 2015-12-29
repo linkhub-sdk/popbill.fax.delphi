@@ -51,6 +51,7 @@ type
                 failPageCnt : Integer;
                 refundPageCnt : Integer;
                 cancelPageCnt : Integer;
+                receiptDT : String;
                 reserveDT : String;
                 sendDT : String;
                 resultDT : String;
@@ -184,6 +185,7 @@ begin
                         result.list[i].refundPageCnt := getJSonInteger(jsons[i],'refundPageCnt');
                         result.list[i].cancelPageCnt := getJSonInteger(jsons[i],'cancelPageCnt');
 
+                        result.list[i].receiptDT := getJSonString(jsons[i],'receiptDT');
                         result.list[i].reserveDT := getJSonString(jsons[i],'reserveDT');
                         result.list[i].sendDT := getJSonString(jsons[i],'sendDT');
                         result.list[i].resultDT := getJSonString(jsons[i],'resultDT');
@@ -304,6 +306,7 @@ begin
                         result[i].refundPageCnt := getJSonInteger(jsons[i],'refundPageCnt');
                         result[i].cancelPageCnt := getJSonInteger(jsons[i],'cancelPageCnt');
 
+                        result[i].receiptDT := getJSonString(jsons[i],'receiptDT');
                         result[i].reserveDT := getJSonString(jsons[i],'reserveDT');
                         result[i].sendDT := getJSonString(jsons[i],'sendDT');
                         result[i].resultDT := getJSonString(jsons[i],'resultDT');
