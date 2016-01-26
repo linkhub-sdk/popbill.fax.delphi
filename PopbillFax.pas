@@ -70,6 +70,7 @@ type
                 pageCount       :       Integer;
                 message         :       String;
                 list            :       TFaxDetailList;
+                destructor Destroy; override;
         end;
 
         TFaxService = class(TPopbillBaseService)
@@ -101,6 +102,18 @@ type
 
         end;
 implementation
+
+destructor TFaxSearchList.Destroy;
+var
+  I: Integer;
+begin
+  for I := 0 to Length(list)-1 do
+    if Assigned(list[I]) then
+      list[I].Free;
+  SetLength(list, 0);
+  inherited Destroy;
+end;
+
 constructor TFaxService.Create(LinkID : String; SecretKey : String);
 begin
        inherited Create(LinkID,SecretKey);
