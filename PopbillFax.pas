@@ -57,6 +57,7 @@ type
                 resultDT : String;
                 sendResult : Integer;
                 fileNames : ArrayOfString;
+                destructor Destroy; override;
         end;
 
         TFaxDetailList = Array Of TFaxDetail;
@@ -102,6 +103,12 @@ type
 
         end;
 implementation
+
+destructor TFaxDetail.Destroy;
+begin
+setlength(filenames,0);
+filenames := nil;
+end;
 
 destructor TFaxSearchList.Destroy;
 var
