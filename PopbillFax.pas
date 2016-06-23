@@ -31,7 +31,14 @@ uses
         Popbill,
         Linkhub;
 type
+        TFaxChargeInfo = class
+        public
+                unitCost : string;
+                chargeMethod : string;
+                rateSystem : string;
+        end;
 
+        
         TReceiver = class
         public
                 receiveNum : String;
@@ -83,10 +90,13 @@ type
 
                 //팩스전송 단일파일 단일 수신자.
                 function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String;     UserID:String) : String; overload;
+
                 //팩스전송  단일파일 동보전송
                 function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String;     UserID:String) : String; overload;
+
                 //팩스전송  다중파일(최대5개) 단일 수신자
                 function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String;     UserID:String) : String; overload;
+
                 //팩스전송  다중파일(최대5개 동보전송
                 function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String;     UserID:String) : String; overload;
 
@@ -100,6 +110,9 @@ type
 
                 //팩스 전송내역 조회
                 function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; UserID : String) : TFaxSearchList;
+
+                // 과금정보 확인
+                function GetChargeInfo(CorpNum : String) : TFaxChargeInfo;
 
         end;
 implementation
@@ -137,6 +150,23 @@ begin
 
 end;
 
+function TFaxService.GetChargeInfo (CorpNum : string) : TFaxChargeInfo;
+var
+        responseJson : String;
+begin
+        responseJson := httpget('/FAX/ChargeInfo',CorpNum,'');
+
+        try
+                result := TFaxChargeInfo.Create;
+
+                result.unitCost := getJSonString(responseJson, 'unitCost');
+                result.chargeMethod := getJSonString(responseJson, 'chargeMethod');
+                result.rateSystem := getJSonString(responseJson, 'rateSystem');
+
+        except on E:Exception do
+                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        end;
+end;
 
 function TFaxService.Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; Order : String; UserID : String) :TFaxSearchList;
 var
