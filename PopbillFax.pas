@@ -19,7 +19,7 @@
 * http://www.popbill.com
 * Author : Kim Seongjun (pallet027@gmail.com)
 * Written : 2014-04-08
-
+* Updated : 2017-02-14
 * Thanks for your interest. 
 *=================================================================================
 *)
@@ -104,6 +104,10 @@ type
                 //팩스전송  다중파일(최대5개 동보전송
                 function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String) : String; overload;
                 function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String) : String; overload;
+
+                //팩스 재전송(단일, 동보)
+                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String) : String; overload;
+                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String) : String; overload;
 
                 //전송상태 및 상세정보 확인.
                 function getSendDetail(CorpNum : String; receiptNum : String; UserID : String) : TFaxDetailList;
@@ -376,6 +380,90 @@ begin
 
        result := getJSonString(responseJson,'receiptNum');
 end;
+
+function TFaxService.ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname :String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String) : String;
+var
+        receivers : TReceiverList;
+begin
+        // 수신자정보가 있는경우 수신정보배열 구성
+        if ( receiveNum <> '' ) AND ( receiveName <> '' ) then begin
+
+                SetLength(Receivers,1);
+                Receivers[0] := TReceiver.create;
+                Receivers[0].receiveNum := receiveNum;
+                Receivers[0].receiveName := receiveName;
+        end
+        // 수신자 정보가 없는경우 수신정보배열 길이 0으로 처리        
+        else begin
+                SetLength(Receivers,0);
+        end;
+
+        result := ResendFAX(CorpNum, ReceiptNum, sendnum, sendname, receivers, reserveDT, UserID);
+end;
+
+
+function TFaxService.ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname: String; receivers : TReceiverList; reserveDT : String; UserID:String) : String;
+var
+        requestJson, responseJson : String;
+        i : Integer;
+begin
+        if ReceiptNum = '' then
+        begin
+                raise EPopbillException.Create(-99999999, '팩스접수번호(receiptNum)가 입력되지 않았습니다.');
+                Exit;
+        end;
+        
+        // ResendFax 호출시 기존전송정보로 전송하는 JsonString 구성
+        // 1) 해당 항목의 변수의 값이 null 인 경우
+        // 2) 항목변수 자체가 JsonString에 정의되지 않은 경우
+        // 3) 동보전송의 경우 rcvs 항목이 JsonString 에 포함되지 않아야함
+                
+        requestJson := '{';
+                
+        if sendnum <> '' then
+                requestJson := requestJson + '"snd":"'+sendnum+'",';
+                
+        if reserveDT <> '' then
+                requestJson := requestJson + '"sndDT":"'+reserveDT+'",';
+                
+        if sendname <> '' then
+                requestJson := requestJson + '"sndnm":"'+sendname+'",';
+
+        // 수신정보배열 구성
+        if Length(receivers) > 0 then begin
+                requestJson := requestJson + '"rcvs":[';
+                
+                for i:=0 to Length(receivers) -1 do begin
+                
+                        requestJson := requestJson + '{';
+
+                        if receivers[i].receiveNum <> '' then
+                                requestJson := requestJson + '"rcv":"'+receivers[i].receiveNum+'",';
+
+                        if receivers[i].receiveName <> '' then
+                                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'"';
+                                
+                        requestJson := requestJson + '}';
+                        
+                        if i < Length(receivers) - 1 then requestJson := requestJson + ',';
+                end; // end of for
+
+                requestJson := requestJson + ']';
+        end 
+        else begin       
+                // JsonString 이 콤마(,)로 끝나는 경우, 마지막 문자 trim 처리
+                if Length(requestJson) <> 1 then
+                        requestJson := Copy(requestJson, 0, Length(requestJson)-1)
+        end;
+                
+        requestJson := requestJson + '}';
+
+        responseJson := httppost('/FAX/'+ ReceiptNum, CorpNum, UserID, requestJson);
+
+        result := getJSonString(responseJson,'receiptNum');
+end;
+
+
 function TFaxService.getSendDetail(CorpNum : String; receiptNum : String; UserID : String) : TFaxDetailList;
 var
         responseJson : String;
