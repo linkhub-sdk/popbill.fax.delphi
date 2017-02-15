@@ -386,7 +386,7 @@ var
         receivers : TReceiverList;
 begin
         // 수신자정보가 있는경우 수신정보배열 구성
-        if ( receiveNum <> '' ) OR ( receiveName <> '' ) then begin
+        if ( receiveNum <> '' ) AND ( receiveName <> '' ) then begin
 
                 SetLength(Receivers,1);
                 Receivers[0] := TReceiver.create;
