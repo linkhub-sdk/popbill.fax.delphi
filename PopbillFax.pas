@@ -106,19 +106,26 @@ type
                 function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String) : String; overload;
 
                 //팩스 재전송(단일, 동보)
-                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String) : String; overload;
-                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String) : String; overload;
+                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String = '') : String; overload;
+                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = '') : String; overload;
 
+                
                 //전송상태 및 상세정보 확인.
-                function getSendDetail(CorpNum : String; receiptNum : String; UserID : String) : TFaxDetailList;
+                function getSendDetail(CorpNum : String; receiptNum : String; UserID : String = '') : TFaxDetailList;
+
                 //예약건 전송취소. 예약시간 10분 전까지만 가능.
-                function CancelReserve(CorpNum : String; receiptNum : string; UserID : String) : TResponse;
+                function CancelReserve(CorpNum : String; receiptNum : string; UserID : String = '') : TResponse;
+
+                
+                 //팩스관련 연결 url.
+                function GetURL(CorpNum : String; UserID : String; TOGO : String) : String; overload;
 
                  //팩스관련 연결 url.
-                function GetURL(CorpNum : String; UserID : String; TOGO : String) : String;
+                function GetURL(CorpNum : String; TOGO : String) : String; overload;
 
+                
                 //팩스 전송내역 조회
-                function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; UserID : String) : TFaxSearchList;
+                function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; UserID : String = '') : TFaxSearchList;
 
                 // 과금정보 확인
                 function GetChargeInfo(CorpNum : String) : TFaxChargeInfo;
@@ -258,7 +265,7 @@ begin
         end;
 end;
 
-
+// 단일파일 전송
 function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String) : String;
 var
         receivers : TReceiverList;
@@ -539,6 +546,10 @@ begin
         end;
 end;
 
+function TFaxService.getURL(CorpNum : String; TOGO : String) : String;
+begin
+        result := getURL(CorpNum, '', TOGO);
+end;
 
 function TFaxService.getURL(CorpNum : String; UserID : String; TOGO : String) : String;
 var
