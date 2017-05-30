@@ -7,8 +7,9 @@
 *
 * http://www.popbill.com
 * Author : Kim Seongjun (pallet027@gmail.com)
+* Contributor : Jeong Yohan (code@linkhub.co.kr)
 * Written : 2014-04-08
-* Updated : 2017-02-14
+* Updated : 2017-05-29
 * Thanks for your interest. 
 *=================================================================================
 *)
@@ -58,6 +59,15 @@ type
         end;
 
         TFaxDetailList = Array Of TFaxDetail;
+
+        TFAXSenderNumber = class
+        public
+                number : string;
+                state : integer;
+                representYN : Boolean;
+        end;
+
+        TFAXSenderNumberList = Array of TFAXSenderNumber;
 
         TFaxSearchList = class
         public
@@ -119,6 +129,8 @@ type
                 // 과금정보 확인
                 function GetChargeInfo(CorpNum : String) : TFaxChargeInfo;
 
+                // 발신번호 목록 조회
+                function GetSenderNumberList(CorpNum : String; UserID : String = '') : TFAXSenderNumberList;
         end;
 implementation
 
@@ -547,6 +559,32 @@ begin
         responseJson := httpget('/FAX/?TG=' + TOGO ,CorpNum,UserID);
         result := getJSonString(responseJson,'url');
 end;
+
+function TFaxService.GetSenderNumberList(CorpNum : string; UserID: String) : TFAXSenderNumberList;
+var
+        responseJson : String;
+        jSons : ArrayOfString;
+        i : Integer;
+begin
+
+        responseJson := httpget('/FAX/SenderNumber',CorpNum, UserID);
+
+        try
+                jSons := ParseJsonList(responseJson);
+                SetLength(result,Length(jSons));
+
+                for i:= 0 to Length(jSons)-1 do
+                begin
+                        result[i] := TFAXSenderNumber.Create;
+                        result[i].number := getJsonString(jSons[i],'number');
+                        result[i].state := getJsonInteger(jSons[i],'state');
+                        result[i].representYN := getJsonBoolean(jSons[i],'representYN');
+                end;
+        except on E:Exception do
+                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        end;
+end;
+
 
 //End of Unit;
 end.
