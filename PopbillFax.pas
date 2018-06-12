@@ -86,7 +86,7 @@ type
 
         TFaxService = class(TPopbillBaseService)
         private
-                function RequestFAX(CorpNum:String; sendnum:String; sendname:String; receivers:TReceiverList; filePaths: Array Of String; reserveDT: String; UserID:String; adsYN:Boolean; title:String = '') : String;
+                function RequestFAX(CorpNum:String; sendnum:String; sendname:String; receivers:TReceiverList; filePaths: Array Of String; reserveDT: String; UserID:String; adsYN:Boolean; title:String = ''; RequestNum : String = '') : String;
         public
                 constructor Create(LinkID : String; SecretKey : String);
 
@@ -94,48 +94,58 @@ type
                 function GetUnitCost(CorpNum : String) : Single;
 
                 //팩스전송 단일파일 단일 수신자.
-                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; Title:String) : String; overload;                
-               
+                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; Title:String; RequestNum : String) : String; overload;
+
 
                 //팩스전송  단일파일 동보전송
-                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; title:String) : String; overload;                
+                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String; overload;
 
 
-                //팩스전송  다중파일(최대5개) 단일 수신자
-                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String) : String; overload;                
+                //팩스전송  다중파일(최대20개) 단일 수신자
+                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String; overload;
 
-                //팩스전송  다중파일(최대5개 동보전송
-                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String; overload;
-                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String) : String; overload;                
+                //팩스전송  다중파일(최대20개) 동보전송
+                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String; overload;
+                function SendFAX(CorpNum : String; sendnum : String; sendname : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String; overload;
 
 
                 //팩스 재전송(단일, 동보)
                 function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String = ''; title:String = '') : String; overload;
-                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = ''; title:String='') : String; overload;                
+                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = ''; title:String='') : String; overload;
 
-                
+                //팩스 재전송(단일, 동보) - 요청번호 할당
+                function ResendFAXRN(CorpNum : String; RequestNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String = ''; title:String = '') : String; overload;
+                function ResendFAXRN(CorpNum : String; RequestNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = ''; title:String='') : String; overload;
+
+
                 //전송상태 및 상세정보 확인.
                 function getSendDetail(CorpNum : String; receiptNum : String; UserID : String = '') : TFaxDetailList;
+
+                //전송상태 및 상세정보 확인 - 요청번호 할당.
+                function getSendDetailRN(CorpNum : String; RequestNum : String; UserID : String = '') : TFaxDetailList;
 
                 //예약건 전송취소. 예약시간 10분 전까지만 가능.
                 function CancelReserve(CorpNum : String; receiptNum : string; UserID : String = '') : TResponse;
 
-                
+                //예약건 전송취소 - 요청번호 할당. 예약시간 10분 전까지만 가능.
+                function CancelReserveRN(CorpNum : String; RequestNum : string; UserID : String = '') : TResponse;
+
+
                  //팩스관련 연결 url.
                 function GetURL(CorpNum : String; UserID : String; TOGO : String) : String; overload;
 
@@ -290,7 +300,7 @@ begin
 end;
 
 // 단일파일 전송
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; RequestNum :String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -299,10 +309,10 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFax(CorpNum,sendnum, '', receivers,filePath,reserveDT,UserID,False);
+        result := RequestFax(CorpNum,sendnum, '', receivers,filePath,reserveDT,UserID,False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -311,10 +321,10 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFax(CorpNum,sendnum, '', receivers,filePath,reserveDT,UserID,adsYN);
+        result := RequestFax(CorpNum,sendnum, '', receivers,filePath,reserveDT,UserID,adsYN, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -323,10 +333,10 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFax(CorpNum,sendnum, sendname, receivers,filePath,reserveDT,UserID,False);
+        result := RequestFax(CorpNum,sendnum, sendname, receivers,filePath,reserveDT,UserID,False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -335,10 +345,10 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFax(CorpNum,sendnum, sendname, receivers,filePath,reserveDT,UserID,adsYN);
+        result := RequestFax(CorpNum,sendnum, sendname, receivers,filePath,reserveDT,UserID,adsYN, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; title:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -347,62 +357,62 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFax(CorpNum,sendnum, sendname, receivers,filePath,reserveDT,UserID,adsYN,title);
+        result := RequestFax(CorpNum,sendnum, sendname, receivers,filePath,reserveDT,UserID,adsYN,title, RequestNum);
 end;
 
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String;     UserID:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; RequestNum : String) : String;
 var
         files : Array Of String;
 begin
         SetLength(files,1);
         files[0] := filePath;
 
-        result := RequestFAX(CorpNum,sendnum, '', receivers,files,reserveDT,UserID, False);
+        result := RequestFAX(CorpNum,sendnum, '', receivers,files,reserveDT,UserID, False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 var
         files : Array Of String;
 begin
         SetLength(files,1);
         files[0] := filePath;
-        result := RequestFAX(CorpNum,sendnum, '', receivers,files,reserveDT,UserID, adsYN);
+        result := RequestFAX(CorpNum,sendnum, '', receivers,files,reserveDT,UserID, adsYN, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: String; receivers : TReceiverList; filePath : String; reserveDT : String;     UserID:String) : String;
-var
-        files : Array Of String;
-begin
-        SetLength(files,1);
-        files[0] := filePath;
-
-        result := RequestFAX(CorpNum,sendnum, sendname, receivers,files,reserveDT,UserID, False);
-end;
-
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; RequestNum : String) : String;
 var
         files : Array Of String;
 begin
         SetLength(files,1);
         files[0] := filePath;
 
-        result := RequestFAX(CorpNum,sendnum, sendname, receivers,files,reserveDT,UserID,adsYN);
+        result := RequestFAX(CorpNum,sendnum, sendname, receivers,files,reserveDT,UserID, False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; title:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 var
         files : Array Of String;
 begin
         SetLength(files,1);
         files[0] := filePath;
 
-        result := RequestFAX(CorpNum,sendnum, sendname, receivers,files,reserveDT,UserID,adsYN,title);
+        result := RequestFAX(CorpNum,sendnum, sendname, receivers,files,reserveDT,UserID,adsYN, '', RequestNum);
+end;
+
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: String; receivers : TReceiverList; filePath : String; reserveDT : String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String;
+var
+        files : Array Of String;
+begin
+        SetLength(files,1);
+        files[0] := filePath;
+
+        result := RequestFAX(CorpNum,sendnum, sendname, receivers,files,reserveDT,UserID,adsYN,title, RequestNum);
 end;
 
 
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String;     UserID:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -411,10 +421,10 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFAX(CorpNum,sendnum, '', receivers,filePaths,reserveDT,UserID, False);
+        result := RequestFAX(CorpNum,sendnum, '', receivers,filePaths,reserveDT,UserID, False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -423,10 +433,10 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFAX(CorpNum,sendnum, '', receivers,filePaths,reserveDT,UserID, adsYN);
+        result := RequestFAX(CorpNum,sendnum, '', receivers,filePaths,reserveDT,UserID, adsYN, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname :String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String;     UserID:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname :String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -435,10 +445,10 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFAX(CorpNum,sendnum, sendname, receivers,filePaths,reserveDT,UserID, False);
+        result := RequestFAX(CorpNum,sendnum, sendname, receivers,filePaths,reserveDT,UserID, False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname :String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname :String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -447,11 +457,11 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFAX(CorpNum,sendnum, sendname, receivers,filePaths,reserveDT,UserID,adsYN);
+        result := RequestFAX(CorpNum,sendnum, sendname, receivers,filePaths,reserveDT,UserID,adsYN, '', RequestNum);
 end;
 
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname :String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname :String; receiveNum : String; receiveName : String; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -460,36 +470,36 @@ begin
         Receivers[0].receiveNum := receiveNum;
         Receivers[0].receiveName := receiveName;
 
-        result := RequestFAX(CorpNum,sendnum, sendname, receivers,filePaths,reserveDT,UserID,adsYN, title);
+        result := RequestFAX(CorpNum,sendnum, sendname, receivers,filePaths,reserveDT,UserID,adsYN, title, RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String;     UserID:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String;
 begin
-        result := RequestFAX(CorpNum, sendnum, '', receivers, filePaths, reserveDT, UserID, False);
+        result := RequestFAX(CorpNum, sendnum, '', receivers, filePaths, reserveDT, UserID, False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 begin
-        result := RequestFAX(CorpNum, sendnum, '', receivers, filePaths, reserveDT, UserID, adsYN);
+        result := RequestFAX(CorpNum, sendnum, '', receivers, filePaths, reserveDT, UserID, adsYN, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: string; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String;     UserID:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: string; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; RequestNum : String) : String;
 begin
-        result := RequestFAX(CorpNum, sendnum, sendname, receivers, filePaths, reserveDT, UserID, False);
+        result := RequestFAX(CorpNum, sendnum, sendname, receivers, filePaths, reserveDT, UserID, False, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: string; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: string; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; RequestNum : String) : String;
 begin
-        result := RequestFAX(CorpNum, sendnum, sendname, receivers, filePaths, reserveDT, UserID, adsYN);
+        result := RequestFAX(CorpNum, sendnum, sendname, receivers, filePaths, reserveDT, UserID, adsYN, '', RequestNum);
 end;
 
-function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: string; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String) : String;
+function TFaxService.SendFAX(CorpNum : String; sendnum : String; sendname: string; receivers : TReceiverList; filePaths : Array Of String; reserveDT : String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String;
 begin
-        result := RequestFAX(CorpNum, sendnum, sendname, receivers, filePaths, reserveDT, UserID, adsYN, title);
+        result := RequestFAX(CorpNum, sendnum, sendname, receivers, filePaths, reserveDT, UserID, adsYN, title, RequestNum);
 end;
 
 
-function TFaxService.RequestFAX(CorpNum:String; sendnum:String; sendname:String; receivers:TReceiverList; filePaths: Array Of String; reserveDT: String; UserID:String; adsYN:Boolean; title:String) : String;
+function TFaxService.RequestFAX(CorpNum:String; sendnum:String; sendname:String; receivers:TReceiverList; filePaths: Array Of String; reserveDT: String; UserID:String; adsYN:Boolean; title:String; RequestNum : String) : String;
 var
         files : TFileList;
         requestJson, responseJson : String;
@@ -514,6 +524,7 @@ begin
         requestJson := requestJson + '"sndnm":"'+sendname+'",';
         requestJson := requestJson + '"title":"'+title+'",';        
         requestJson := requestJson + '"fCnt":"'+ intToStr(length(files))+'",';
+        if RequestNum <> '' then requestJson := requestJson + '"requestNum":"'+RequestNum+'",';
 
         requestJson := requestJson + '"rcvs":[';
 
@@ -550,14 +561,14 @@ begin
 
                 SetLength(Receivers,1);
                 Receivers[0] := TReceiver.create;
-                
+
                 if receiveNum <> '' then
                         Receivers[0].receiveNum := receiveNum;
-                        
+
                 if receiveName <> '' then
                         Receivers[0].receiveName := receiveName;
         end
-        // 수신자 정보가 없는경우 수신정보배열 길이 0으로 처리        
+        // 수신자 정보가 없는경우 수신정보배열 길이 0으로 처리
         else begin
                 SetLength(Receivers,0);
         end;
@@ -572,7 +583,7 @@ var
 begin
         if ReceiptNum = '' then
         begin
-                raise EPopbillException.Create(-99999999, '팩스접수번호(receiptNum)가 입력되지 않았습니다.');
+                raise EPopbillException.Create(-99999999, '팩스접수번호(ReceiptNum)가 입력되지 않았습니다.');
                 Exit;
         end;
 
@@ -608,20 +619,20 @@ begin
 
                         if receivers[i].receiveName <> '' then
                                 requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'"';
-                                
+
                         requestJson := requestJson + '}';
-                        
+
                         if i < Length(receivers) - 1 then requestJson := requestJson + ',';
                 end; // end of for
 
                 requestJson := requestJson + ']';
-        end 
-        else begin       
+        end
+        else begin
                 // JsonString 이 콤마(,)로 끝나는 경우, 마지막 문자 trim 처리
                 if Length(requestJson) <> 1 then
                         requestJson := Copy(requestJson, 0, Length(requestJson)-1)
         end;
-                
+
         requestJson := requestJson + '}';
 
         responseJson := httppost('/FAX/'+ ReceiptNum, CorpNum, UserID, requestJson);
@@ -650,7 +661,7 @@ begin
                         result[i].state := getJSonInteger(jsons[i],'state');
                         result[i].result := getJSonInteger(jsons[i],'result');
                         result[i].title := getJSonString(jsons[i],'title');
-                        
+
                         result[i].sendState := getJSonInteger(jsons[i],'sendState');
                         result[i].convState := getJSonInteger(jsons[i],'convState');
 
@@ -742,6 +753,172 @@ begin
         end;
 end;
 
+function TFaxService.getSendDetailRN(CorpNum, RequestNum, UserID: String): TFaxDetailList;
+var
+        responseJson : String;
+        jSons : ArrayOfString;
+        i : Integer;
+begin
+        if RequestNum = '' then raise EPopbillException.Create(-99999999,'No RequestNum');
+
+        responseJson := httpget('/FAX/Get/' + RequestNum, CorpNum, UserID);
+
+        try
+                jSons := ParseJsonList(responseJson);
+                SetLength(result,Length(jSons));
+
+                for i := 0 to Length(jSons)-1 do
+                begin
+                        result[i] := TFaxDetail.Create;
+                        result[i].state := getJSonInteger(jsons[i],'state');
+                        result[i].result := getJSonInteger(jsons[i],'result');
+                        result[i].title := getJSonString(jsons[i],'title');
+
+                        result[i].sendState := getJSonInteger(jsons[i],'sendState');
+                        result[i].convState := getJSonInteger(jsons[i],'convState');
+
+                        result[i].sendNum := getJSonString(jsons[i],'sendNum');
+                        result[i].senderName := getJSonString(jsons[i],'senderName');
+                        result[i].receiveNum := getJSonString(jsons[i],'receiveNum');
+                        result[i].receiveName := getJSonString(jsons[i],'receiveName');
+
+                        result[i].sendPageCnt := getJSonInteger(jsons[i],'sendPageCnt');
+                        result[i].successPageCnt := getJSonInteger(jsons[i],'successPageCnt');
+                        result[i].failPageCnt := getJSonInteger(jsons[i],'failPageCnt');
+                        result[i].refundPageCnt := getJSonInteger(jsons[i],'refundPageCnt');
+                        result[i].cancelPageCnt := getJSonInteger(jsons[i],'cancelPageCnt');
+
+                        result[i].receiptDT := getJSonString(jsons[i],'receiptDT');
+                        result[i].reserveDT := getJSonString(jsons[i],'reserveDT');
+                        result[i].sendDT := getJSonString(jsons[i],'sendDT');
+                        result[i].resultDT := getJSonString(jsons[i],'resultDT');
+                        result[i].sendResult := getJSonInteger(jsons[i],'sendResult');
+
+                        result[i].fileNames := getJsonList(jsons[i],'fileNames');
+                end;
+
+        except on E:Exception do
+                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        end;
+end;
+
+function TFaxService.CancelReserveRN(CorpNum, RequestNum, UserID: String): TResponse;
+var
+        responseJson : String;
+begin
+        if RequestNum = '' then raise EPopbillException.Create(-99999999,'No RequestNum');
+
+        try
+                responseJson := httpget('/FAX/Cancel/' + RequestNum, CorpNum, UserID);
+
+                result.code := getJSonInteger(responseJson,'code');
+                result.message := getJSonString(responseJson,'message');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.Message);
+                        end;
+
+                        result.code := le.code;
+                        result.message := le.Message;
+                end;
+        end;
+end;
+
+function TFaxService.ResendFAXRN(CorpNum, RequestNum: String; sendnum: Variant;
+                                 sendname, receiveNum, receiveName, reserveDT,
+                                 UserID, title: String): String;
+var
+        receivers : TReceiverList;
+begin
+        // 수신자정보가 있는경우 수신정보배열 구성
+        if ( receiveNum <> '' ) AND ( receiveName <> '' ) then begin
+
+                SetLength(Receivers,1);
+                Receivers[0] := TReceiver.create;
+
+                if receiveNum <> '' then
+                        Receivers[0].receiveNum := receiveNum;
+
+                if receiveName <> '' then
+                        Receivers[0].receiveName := receiveName;
+        end
+        // 수신자 정보가 없는경우 수신정보배열 길이 0으로 처리
+        else begin
+                SetLength(Receivers,0);
+        end;
+
+        result := ResendFAXRN(CorpNum, RequestNum, sendnum, sendname, receivers, reserveDT, UserID, title);
+end;
+
+function TFaxService.ResendFAXRN(CorpNum, RequestNum: String; sendnum: Variant;
+                                 sendname: String; receivers: TReceiverList;
+                                 reserveDT, UserID, title: String): String;
+var
+        requestJson, responseJson : String;
+        i : Integer;
+begin
+        if RequestNum = '' then
+        begin
+                raise EPopbillException.Create(-99999999, '팩스전송요청번호(RequestNum)가 입력되지 않았습니다.');
+                Exit;
+        end;
+
+        // ResendFax 호출시 기존전송정보로 전송하는 JsonString 구성
+        // 1) 해당 항목의 변수의 값이 null 인 경우
+        // 2) 항목변수 자체가 JsonString에 정의되지 않은 경우
+        // 3) 동보전송의 경우 rcvs 항목이 JsonString 에 포함되지 않아야함
+
+        requestJson := '{';
+
+        if sendnum <> '' then
+                requestJson := requestJson + '"snd":"'+sendnum+'",';
+
+        if reserveDT <> '' then
+                requestJson := requestJson + '"sndDT":"'+reserveDT+'",';
+
+        if sendname <> '' then
+                requestJson := requestJson + '"sndnm":"'+sendname+'",';
+                
+        if title <> '' then
+                requestJson := requestJson + '"title":"'+title+'",';
+
+        // 수신정보배열 구성
+        if Length(receivers) > 0 then begin
+                requestJson := requestJson + '"rcvs":[';
+                
+                for i:=0 to Length(receivers) -1 do begin
+                
+                        requestJson := requestJson + '{';
+
+                        if receivers[i].receiveNum <> '' then
+                                requestJson := requestJson + '"rcv":"'+receivers[i].receiveNum+'",';
+
+                        if receivers[i].receiveName <> '' then
+                                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'"';
+
+                        requestJson := requestJson + '}';
+
+                        if i < Length(receivers) - 1 then requestJson := requestJson + ',';
+                end; // end of for
+
+                requestJson := requestJson + ']';
+        end
+        else begin
+                // JsonString 이 콤마(,)로 끝나는 경우, 마지막 문자 trim 처리
+                if Length(requestJson) <> 1 then
+                        requestJson := Copy(requestJson, 0, Length(requestJson)-1)
+        end;
+
+        requestJson := requestJson + '}';
+
+        responseJson := httppost('/FAX/Resend/'+ RequestNum, CorpNum, UserID, requestJson);
+
+        result := getJSonString(responseJson,'receiptNum');
+end;
+
 
 //End of Unit;
 end.
+
