@@ -131,8 +131,8 @@ type
                 function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = ''; title:String='') : String; overload;
 
                 //팩스 재전송(단일, 동보) - 요청번호 할당
-                function ResendFAXRN(CorpNum : String; RequestNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String = ''; title:String = '') : String; overload;
-                function ResendFAXRN(CorpNum : String; RequestNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = ''; title:String='') : String; overload;
+                function ResendFAXRN(CorpNum : String; RequestNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; OrignalRequestNum : String; UserID:String = ''; title:String = '') : String; overload;
+                function ResendFAXRN(CorpNum : String; RequestNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; OrignalRequestNum : String; UserID:String = ''; title:String='') : String; overload;
 
 
                 //전송상태 및 상세정보 확인.
@@ -830,7 +830,7 @@ end;
 
 function TFaxService.ResendFAXRN(CorpNum, RequestNum: String; sendnum: Variant;
                                  sendname, receiveNum, receiveName, reserveDT,
-                                 UserID, title: String): String;
+                                 OrignalRequestNum, UserID, title: String): String;
 var
         receivers : TReceiverList;
 begin
@@ -851,12 +851,13 @@ begin
                 SetLength(Receivers,0);
         end;
 
-        result := ResendFAXRN(CorpNum, RequestNum, sendnum, sendname, receivers, reserveDT, UserID, title);
+        result := ResendFAXRN(CorpNum, RequestNum, sendnum, sendname, receivers,
+                              reserveDT, OrignalRequestNum, UserID, title);
 end;
 
 function TFaxService.ResendFAXRN(CorpNum, RequestNum: String; sendnum: Variant;
                                  sendname: String; receivers: TReceiverList;
-                                 reserveDT, UserID, title: String): String;
+                                 reserveDT, OrignalRequestNum, UserID, title: String): String;
 var
         requestJson, responseJson : String;
         i : Integer;
@@ -885,6 +886,9 @@ begin
                 
         if title <> '' then
                 requestJson := requestJson + '"title":"'+title+'",';
+
+        if RequestNum <> '' then
+                requestJson := requestJson + '"requestNum":"'+RequestNum+'",';
 
         // 수신정보배열 구성
         if Length(receivers) > 0 then begin
@@ -915,7 +919,7 @@ begin
 
         requestJson := requestJson + '}';
 
-        responseJson := httppost('/FAX/Resend/'+ RequestNum, CorpNum, UserID, requestJson);
+        responseJson := httppost('/FAX/Resend/'+ OrignalRequestNum, CorpNum, UserID, requestJson);
 
         result := getJSonString(responseJson,'receiptNum');
 end;
