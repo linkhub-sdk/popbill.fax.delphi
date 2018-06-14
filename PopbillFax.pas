@@ -864,7 +864,13 @@ var
 begin
         if RequestNum = '' then
         begin
-                raise EPopbillException.Create(-99999999, '팩스전송요청번호(RequestNum)가 입력되지 않았습니다.');
+                raise EPopbillException.Create(-99999999, '전송요청번호(RequestNum)가 입력되지 않았습니다.');
+                Exit;
+        end;
+
+        if OrignalRequestNum = '' then
+        begin
+                raise EPopbillException.Create(-99999999, '원본 팩스의 전송요청번호(OrignalRequestNum)가 입력되지 않았습니다.');
                 Exit;
         end;
 
