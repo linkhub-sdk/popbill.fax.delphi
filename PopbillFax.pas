@@ -11,7 +11,7 @@
 * Written : 2014-04-08
 * Updated : 2017-07-19
 * Contributor : Kim Eunhye (code@linkhub.co.kr)
-* Updated : 2018-06-18
+* Updated : 2018-06-28
 * Thanks for your interest. 
 *=================================================================================
 *)
@@ -127,8 +127,8 @@ type
 
 
                 //팩스 재전송(단일, 동보)
-                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String = ''; title:String = '') : String; overload;
-                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = ''; title:String='') : String; overload;
+                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String = ''; title:String = ''; requestNum : String = '') : String; overload;
+                function ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname : String; receivers : TReceiverList; reserveDT : String; UserID:String = ''; title:String=''; requestNum : String = '') : String; overload;
 
                 //팩스 재전송(단일, 동보) - 요청번호 할당
                 function ResendFAXRN(CorpNum : String; requestNum : String; sendnum : Variant; sendname : String; receiveNum : String; receiveName : String; reserveDT : String; orignalRequestNum : String; UserID:String = ''; title:String = '') : String; overload;
@@ -554,7 +554,7 @@ begin
 end;
 
 
-function TFaxService.ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname :String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String; title:String) : String;
+function TFaxService.ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname :String; receiveNum : String; receiveName : String; reserveDT : String; UserID:String; title:String; requestNum : String) : String;
 var
         receivers : TReceiverList;
 begin
@@ -575,10 +575,10 @@ begin
                 SetLength(Receivers,0);
         end;
 
-        result := ResendFAX(CorpNum, ReceiptNum, sendnum, sendname, receivers, reserveDT, UserID, title);
+        result := ResendFAX(CorpNum, ReceiptNum, sendnum, sendname, receivers, reserveDT, UserID, title, requestNum);
 end;
 
-function TFaxService.ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname: String; receivers : TReceiverList; reserveDT : String; UserID:String; title:String) : String;
+function TFaxService.ResendFAX(CorpNum : String; ReceiptNum : String; sendnum : Variant; sendname: String; receivers : TReceiverList; reserveDT : String; UserID:String; title:String; requestNum : String) : String;
 var
         requestJson, responseJson : String;
         i : Integer;
@@ -607,6 +607,9 @@ begin
                 
         if title <> '' then
                 requestJson := requestJson + '"title":"'+title+'",';
+
+        if requestNum <> '' then
+                requestJson := requestJson + '"requestNum":"'+requestNum+'",';
 
         // 수신정보배열 구성
         if Length(receivers) > 0 then begin
