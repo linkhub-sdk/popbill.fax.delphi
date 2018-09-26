@@ -11,7 +11,7 @@
 * Written : 2014-04-08
 * Updated : 2017-07-19
 * Contributor : Kim Eunhye (code@linkhub.co.kr)
-* Updated : 2018-09-18
+* Updated : 2018-09-26
 * Thanks for your interest. 
 *=================================================================================
 *)
@@ -59,6 +59,8 @@ type
                 fileNames : ArrayOfString;
                 receiptNum : String;
                 requestNum : String;
+                chargePageCnt : Integer;
+                tiffFileSize  : String;
 
                 sendState : Integer;
                 convState : Integer;
@@ -373,6 +375,8 @@ begin
                         result.list[i].fileNames := getJsonList(jsons[i],'fileNames');
                         result.list[i].receiptNum := getJSonString(jsons[i],'receiptNum');
                         result.list[i].requestNum := getJSonString(jsons[i],'requestNum');
+                        result.list[i].chargePageCnt := getJSonInteger(jsons[i],'chargePageCnt');
+                        result.list[i].tiffFileSize := getJSonString(jsons[i],'tiffFileSize');
 
                         result.list[i].sendState := getJSonInteger(jsons[i],'sendState');
                         result.list[i].convState := getJSonInteger(jsons[i],'convState');
@@ -766,6 +770,8 @@ begin
                         result[i].fileNames := getJsonList(jsons[i],'fileNames');
                         result[i].receiptNum := getJSonString(jsons[i],'receiptNum');
                         result[i].requestNum := getJSonString(jsons[i],'requestNum');
+                        result[i].chargePageCnt := getJSonInteger(jsons[i],'chargePageCnt');
+                        result[i].tiffFileSize := getJSonString(jsons[i],'tiffFileSize');
 
                         result[i].sendState := getJSonInteger(jsons[i],'sendState');
                         result[i].convState := getJSonInteger(jsons[i],'convState');
@@ -876,6 +882,8 @@ begin
                         result[i].fileNames := getJsonList(jsons[i],'fileNames');
                         result[i].receiptNum := getJSonString(jsons[i],'receiptNum');
                         result[i].requestNum := getJSonString(jsons[i],'requestNum');
+                        result[i].chargePageCnt := getJSonInteger(jsons[i],'chargePageCnt');
+                        result[i].tiffFileSize := getJSonString(jsons[i],'tiffFileSize');
 
                         result[i].sendState := getJSonInteger(jsons[i],'sendState');
                         result[i].convState := getJSonInteger(jsons[i],'convState');
