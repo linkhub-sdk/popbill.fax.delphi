@@ -165,6 +165,10 @@ type
                 //문자 발신번호 관리 url.
                 function GetSenderNumberMgtURL(CorpNum : String; UserID : String) : String;
 
+                //팩스 미리보기 url.
+                function GetPreviewURL(CorpNum : String; receiptNum : string; UserID : String) : String;
+
+
                 //팩스 전송내역 조회
                 function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; UserID : String = '') : TFaxSearchList; overload;
                 function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; QString : String; UserID : String) : TFaxSearchList; overload;
@@ -839,6 +843,14 @@ var
         responseJson : String;
 begin
         responseJson := httpget('/FAX/?TG=SENDER' ,CorpNum,UserID);
+        result := getJSonString(responseJson,'url');
+end;
+
+function TFaxService.GetPreviewURL(CorpNum : String; ReceiptNum : string; UserID : String) : String;
+var
+        responseJson : String;
+begin
+        responseJson := httpget('/FAX/Preview/'+ReceiptNum ,CorpNum,UserID);
         result := getJSonString(responseJson,'url');
 end;
 
