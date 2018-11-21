@@ -159,6 +159,11 @@ type
                  //팩스관련 연결 url.
                 function GetURL(CorpNum : String; TOGO : String) : String; overload;
 
+                //문자 전송내역  url.
+                function GetSentListURL(CorpNum : String; UserID : String) : String;
+
+                //문자 발신번호 관리 url.
+                function GetSenderNumberMgtURL(CorpNum : String; UserID : String) : String;
 
                 //팩스 전송내역 조회
                 function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; UserID : String = '') : TFaxSearchList; overload;
@@ -818,6 +823,22 @@ var
         responseJson : String;
 begin
         responseJson := httpget('/FAX/?TG=' + TOGO ,CorpNum,UserID);
+        result := getJSonString(responseJson,'url');
+end;
+
+function TFaxService.GetSentListURL(CorpNum : String; UserID : String) : String;
+var
+        responseJson : String;
+begin
+        responseJson := httpget('/FAX/?TG=BOX' ,CorpNum,UserID);
+        result := getJSonString(responseJson,'url');
+end;
+
+function TFaxService.GetSenderNumberMgtURL(CorpNum : String; UserID : String) : String;
+var
+        responseJson : String;
+begin
+        responseJson := httpget('/FAX/?TG=SENDER' ,CorpNum,UserID);
         result := getJSonString(responseJson,'url');
 end;
 
