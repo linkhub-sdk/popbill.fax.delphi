@@ -9,9 +9,7 @@
 * Author : Kim Seongjun (pallet027@gmail.com)
 * Contributor : Jeong Yohan (code@linkhub.co.kr)
 * Written : 2014-04-08
-* Updated : 2017-07-19
-* Contributor : Kim Eunhye (code@linkhub.co.kr)
-* Updated : 2018-09-26
+* Updated : 2019-03-21
 * Thanks for your interest. 
 *=================================================================================
 *)
@@ -208,17 +206,49 @@ function TFaxService.GetUnitCost(CorpNum : String) : Single;
 var
         responseJson : string;
 begin
-        responseJson := httpget('/FAX/UnitCost',CorpNum,'');
+        try
+                responseJson := httpget('/FAX/UnitCost',CorpNum,'');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end
+                        else
+                        begin
+                                result := 0.0;
+                                exit;
+                        end;
+                end;
+        end;
 
-        result := strToFloat(getJSonString( responseJson,'unitCost'));
-
+        if LastErrCode <> 0 then
+        begin
+                exit;
+        end
+        else
+        begin
+                result := strToFloat(getJSonString( responseJson,'unitCost'));
+                exit;
+        end;       
 end;
 
 function TFaxService.GetChargeInfo (CorpNum : string) : TFaxChargeInfo;
 var
         responseJson : String;
 begin
-        responseJson := httpget('/FAX/ChargeInfo',CorpNum,'');
+        try
+                responseJson := httpget('/FAX/ChargeInfo',CorpNum,'');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end;
+                end;
+        end;
 
         try
                 result := TFaxChargeInfo.Create;
@@ -227,8 +257,21 @@ begin
                 result.chargeMethod := getJSonString(responseJson, 'chargeMethod');
                 result.rateSystem := getJSonString(responseJson, 'rateSystem');
 
-        except on E:Exception do
-                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        except
+                on E:Exception do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+                                exit;
+                        end
+                        else
+                        begin
+                                result := TFaxChargeInfo.Create;
+                                setLastErrCode(-99999999);
+                                setLastErrMessage('결과처리 실패.[Malformed Json]');
+                                exit;
+                        end;
+                end;
         end;
 end;
 
@@ -347,8 +390,35 @@ begin
 
         if QString <> '' then uri := uri + '&&QString=' + UrlEncodeUTF8(QString);
 
-        responseJson :=  httpget(uri,CorpNum,UserID);
+        try
+                responseJson :=  httpget(uri,CorpNum,UserID);
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code, le.message);
+                                exit;
+                        end
+                        else
+                        begin
+                                result := TFaxSearchList.Create;
+                                result.code := le.code;
+                                result.message := le.message;
+                                exit;
+                        end;
+                end;
+        end;
 
+        if LastErrCode <> 0 then
+        begin
+                result := TFaxSearchList.Create;
+                result.code := LastErrCode;
+                result.message := LastErrMessage;
+                exit;
+        end
+        else
+        begin
+        
         result := TFaxSearchList.Create;
 
         result.code             := getJSonInteger(responseJson,'code');
@@ -392,8 +462,22 @@ begin
                         result.list[i].sendResult := getJSonInteger(jsons[i],'sendResult');
 
                 end;
-        except on E:Exception do
-                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        except
+                on E:Exception do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+                                exit;
+                        end
+                        else
+                        begin
+                                result := TFaxSearchList.Create;
+                                result.code := -99999999;
+                                result.message := '결과처리 실패.[Malformed Json]';
+                                exit; 
+                        end;
+                end;
+        end;
         end;
 end;
 
@@ -640,14 +724,25 @@ begin
         requestJson := requestJson + '}';
 
        try
-                responseJson := httppost('/FAX',CorpNum,UserID,requestJson,files);
+                try
+                        responseJson := httppost('/FAX',CorpNum,UserID,requestJson,files);
+                        result := getJSonString(responseJson,'receiptNum');                        
+                except
+                        on le : EPopbillException do begin
+                                if FIsThrowException then
+                                begin
+                                        raise EPopbillException.Create(le.code,le.message);
+                                        exit;
+                                end;
+                        end;
+                end;
        finally
                 for i:= 0 to Length(files) -1 do begin
                         files[i].Data.Free;
                 end;
        end;
 
-       result := getJSonString(responseJson,'receiptNum');
+
 end;
 
 
@@ -682,8 +777,18 @@ var
 begin
         if ReceiptNum = '' then
         begin
-                raise EPopbillException.Create(-99999999, '팩스접수번호(ReceiptNum)가 입력되지 않았습니다.');
-                Exit;
+                if FIsThrowException then
+                begin
+                        raise EPopbillException.Create(-99999999, '팩스접수번호(ReceiptNum)가 입력되지 않았습니다.');
+                        Exit;
+                end
+                else
+                begin
+                        result := '';
+                        setLastErrCode(-99999999);
+                        setLastErrMessage('팩스접수번호(ReceiptNum)가 입력되지 않았습니다.');
+                        exit;
+                end;
         end;
 
         // ResendFax 호출시 기존전송정보로 전송하는 JsonString 구성
@@ -737,9 +842,18 @@ begin
 
         requestJson := requestJson + '}';
 
-        responseJson := httppost('/FAX/'+ ReceiptNum, CorpNum, UserID, requestJson);
-
-        result := getJSonString(responseJson,'receiptNum');
+        try
+                responseJson := httppost('/FAX/'+ ReceiptNum, CorpNum, UserID, requestJson);
+                result := getJSonString(responseJson,'receiptNum');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end;
+                end;
+        end;
 end;
 
 
@@ -749,9 +863,47 @@ var
         jSons : ArrayOfString;
         i : Integer;
 begin
-        if receiptNum = '' then raise EPopbillException.Create(-99999999,'No ReceiptNum');
+        if ReceiptNum = '' then
+        begin
+                if FIsThrowException then
+                begin
+                        raise EPopbillException.Create(-99999999, '팩스접수번호(ReceiptNum)가 입력되지 않았습니다.');
+                        Exit;
+                end
+                else
+                begin
+                        SetLength(result,0);
+                        setLastErrCode(-99999999);
+                        setLastErrMessage('팩스접수번호(ReceiptNum)가 입력되지 않았습니다.');
+                        exit;
+                end;
+        end;
 
-        responseJson := httpget('/FAX/' + receiptNum,CorpNum,UserID);
+
+        try
+                responseJson := httpget('/FAX/' + receiptNum,CorpNum,UserID);
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code, le.message);
+                                exit;
+                        end
+                        else
+                        begin
+                                SetLength(result,0);
+                                exit;
+                        end;
+                end;
+        end;
+
+        if LastErrCode <> 0 then
+        begin
+                exit;
+        end
+        else
+        begin
+        
 
         try
                 jSons := ParseJsonList(responseJson);
@@ -787,8 +939,22 @@ begin
                         result[i].sendResult := getJSonInteger(jsons[i],'sendResult');
                 end;
 
-        except on E:Exception do
-                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        except
+                on E:Exception do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+                                exit;
+                        end
+                        else
+                        begin
+                                SetLength(result,0);
+                                setLastErrCode(-99999999);
+                                setLastErrMessage('결과처리 실패.[Malformed Json]');
+                                exit;                                
+                        end;
+                end;
+        end;
         end;
 
 end;
@@ -797,23 +963,49 @@ function TFaxService.CancelReserve(CorpNum : String; receiptNum : string; UserID
 var
         responseJson : String;
 begin
-        if receiptNum = '' then raise EPopbillException.Create(-99999999,'No ReceiptNum');
+
+        if ReceiptNum = '' then
+        begin
+                if FIsThrowException then
+                begin
+                        raise EPopbillException.Create(-99999999, '팩스접수번호(ReceiptNum)가 입력되지 않았습니다.');
+                        Exit;
+                end
+                else
+                begin
+                        result.code := -99999999;
+                        result.message := '팩스접수번호(ReceiptNum)가 입력되지 않았습니다.'; 
+                        exit;
+                end;
+        end;
+
 
         try
                 responseJson := httpget('/FAX/' + receiptNum + '/Cancel',CorpNum,UserID);
-
-                result.code := getJSonInteger(responseJson,'code');
-                result.message := getJSonString(responseJson,'message');
         except
                 on le : EPopbillException do begin
                         if FIsThrowException then
                         begin
                                 raise EPopbillException.Create(le.code,le.Message);
+                        end
+                        else
+                        begin
+                                result.code := le.code;
+                                result.message := le.Message;
+                                exit;
                         end;
-
-                        result.code := le.code;
-                        result.message := le.Message;
                 end;
+        end;
+
+        if LastErrCode <> 0 then
+        begin
+                result.code := LastErrCode;
+                result.message := LastErrMessage;
+        end
+        else
+        begin
+                result.code := getJSonInteger(responseJson,'code');
+                result.message := getJSonString(responseJson,'message');
         end;
 end;
 
@@ -826,32 +1018,73 @@ function TFaxService.getURL(CorpNum : String; UserID : String; TOGO : String) : 
 var
         responseJson : String;
 begin
-        responseJson := httpget('/FAX/?TG=' + TOGO ,CorpNum,UserID);
-        result := getJSonString(responseJson,'url');
+        try
+                responseJson := httpget('/FAX/?TG=' + TOGO ,CorpNum,UserID);
+                result := getJSonString(responseJson,'url');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code, le.message);
+                                exit;
+                        end;
+                end;
+        end;
 end;
 
 function TFaxService.GetSentListURL(CorpNum : String; UserID : String) : String;
 var
         responseJson : String;
 begin
-        responseJson := httpget('/FAX/?TG=BOX' ,CorpNum,UserID);
-        result := getJSonString(responseJson,'url');
+        try 
+                responseJson := httpget('/FAX/?TG=BOX' ,CorpNum,UserID);
+                result := getJSonString(responseJson,'url');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code, le.message);
+                                exit;
+                        end;
+                end;
+        end;
 end;
 
 function TFaxService.GetSenderNumberMgtURL(CorpNum : String; UserID : String) : String;
 var
         responseJson : String;
 begin
-        responseJson := httpget('/FAX/?TG=SENDER' ,CorpNum,UserID);
-        result := getJSonString(responseJson,'url');
+        try
+                responseJson := httpget('/FAX/?TG=SENDER' ,CorpNum,UserID);
+                result := getJSonString(responseJson,'url');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end;
+                end;
+        end;
+
 end;
 
 function TFaxService.GetPreviewURL(CorpNum : String; ReceiptNum : string; UserID : String) : String;
 var
         responseJson : String;
 begin
-        responseJson := httpget('/FAX/Preview/'+ReceiptNum ,CorpNum,UserID);
-        result := getJSonString(responseJson,'url');
+        try
+                responseJson := httpget('/FAX/Preview/'+ReceiptNum ,CorpNum,UserID);
+                result := getJSonString(responseJson,'url');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end;
+                end;
+        end;        
 end;
 
 function TFaxService.GetSenderNumberList(CorpNum : string; UserID: String) : TFAXSenderNumberList;
@@ -861,21 +1094,57 @@ var
         i : Integer;
 begin
 
-        responseJson := httpget('/FAX/SenderNumber',CorpNum, UserID);
-
         try
-                jSons := ParseJsonList(responseJson);
-                SetLength(result,Length(jSons));
-
-                for i:= 0 to Length(jSons)-1 do
-                begin
-                        result[i] := TFAXSenderNumber.Create;
-                        result[i].number := getJsonString(jSons[i],'number');
-                        result[i].state := getJsonInteger(jSons[i],'state');
-                        result[i].representYN := getJsonBoolean(jSons[i],'representYN');
+                responseJson := httpget('/FAX/SenderNumber',CorpNum, UserID);
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end
+                        else
+                        begin
+                                SetLength(result,0);
+                                exit;
+                        end;
                 end;
-        except on E:Exception do
-                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        end;
+
+        if LastErrCode <> 0 then
+        begin
+                exit;
+        end
+        else
+        begin
+                try
+                        jSons := ParseJsonList(responseJson);
+                        SetLength(result,Length(jSons));
+
+                        for i:= 0 to Length(jSons)-1 do
+                        begin
+                                result[i] := TFAXSenderNumber.Create;
+                                result[i].number := getJsonString(jSons[i],'number');
+                                result[i].state := getJsonInteger(jSons[i],'state');
+                                result[i].representYN := getJsonBoolean(jSons[i],'representYN');
+                        end;
+                except
+                        on E:Exception do begin
+                                if FIsThrowException then
+                                begin
+                                        raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+                                        exit;
+                                end
+                                else
+                                begin
+                                        SetLength(result,0);
+                                        SetLength(jSons,0);
+                                        setLastErrCode(-99999999);
+                                        setLastErrMessage('결과처리 실패.[Malformed Json]');
+                                        exit;
+                                end;
+                        end;
+                end;
         end;
 end;
 
@@ -885,9 +1154,40 @@ var
         jSons : ArrayOfString;
         i : Integer;
 begin
-        if requestNum = '' then raise EPopbillException.Create(-99999999,'No requestNum');
+        if requestNum = '' then
+        begin
+                if FIsThrowException then
+                begin
+                        raise EPopbillException.Create(-99999999, '팩스요청번호(requestNum)가 입력되지 않았습니다.');
+                        Exit;
+                end
+                else
+                begin
+                        SetLength(result,0);                                                        
+                        setLastErrCode(-99999999);
+                        setLastErrMessage('팩스요청번호(requestNum)가 입력되지 않았습니다.'); 
+                        exit;
+                end;
+        end;
 
-        responseJson := httpget('/FAX/Get/' + requestNum, CorpNum, UserID);
+        try
+                responseJson := httpget('/FAX/Get/' + requestNum, CorpNum, UserID);
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code, le.message);
+                                exit;
+                        end;
+                end;
+        end;
+
+        if LastErrCode <> 0 then
+        begin
+                exit;
+        end
+        else
+        begin
 
         try
                 jSons := ParseJsonList(responseJson);
@@ -923,8 +1223,22 @@ begin
                         result[i].sendResult := getJSonInteger(jsons[i],'sendResult');
                 end;
 
-        except on E:Exception do
-                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+        except
+                on E:Exception do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+                        end
+                        else
+                        begin
+                                SetLength(result,0);
+                                SetLength(jSons,0);
+                                setLastErrCode(-99999999);
+                                setLastErrMessage('결과처리 실패.[Malformed Json]');
+                                exit;
+                        end;
+                end;
+        end;
         end;
 end;
 
@@ -932,23 +1246,51 @@ function TFaxService.CancelReserveRN(CorpNum, requestNum, UserID: String): TResp
 var
         responseJson : String;
 begin
-        if requestNum = '' then raise EPopbillException.Create(-99999999,'No requestNum');
+        if requestNum = '' then
+        begin
+                if FIsThrowException then
+                begin
+                        raise EPopbillException.Create(-99999999, '팩스요청번호(requestNum)가 입력되지 않았습니다.');
+                        Exit;
+                end
+                else
+                begin
+                        result.code := -99999999;
+                        result.message := '팩스요청번호(requestNum)가 입력되지 않았습니다.';
+                        exit;
+                end;
+        end;
+
 
         try
                 responseJson := httpget('/FAX/Cancel/' + requestNum, CorpNum, UserID);
-
-                result.code := getJSonInteger(responseJson,'code');
-                result.message := getJSonString(responseJson,'message');
         except
                 on le : EPopbillException do begin
                         if FIsThrowException then
                         begin
                                 raise EPopbillException.Create(le.code,le.Message);
+                                exit;
+                        end
+                        else
+                        begin
+                                result.code := le.code;
+                                result.message := le.Message;
+                                exit;
                         end;
-
-                        result.code := le.code;
-                        result.message := le.Message;
                 end;
+        end;
+
+        if LastErrCode <> 0 then
+        begin
+                result.code := LastErrCode;
+                result.message := LastErrMessage;
+                exit;
+        end
+        else
+        begin
+                result.code := getJSonInteger(responseJson,'code');
+                result.message := getJSonString(responseJson,'message');
+                exit;
         end;
 end;
 
@@ -988,14 +1330,34 @@ var
 begin
         if requestNum = '' then
         begin
-                raise EPopbillException.Create(-99999999, '전송요청번호(requestNum)가 입력되지 않았습니다.');
-                Exit;
+                if FIsThrowException then
+                begin
+                        raise EPopbillException.Create(-99999999, '전송요청번호(requestNum)가 입력되지 않았습니다.');
+                        Exit;
+                end
+                else
+                begin
+                        result := '';
+                        setLastErrCode(-99999999);
+                        setLastErrMessage('전송요청번호(requestNum)가 입력되지 않았습니다.');
+                        exit;
+                end;
         end;
 
         if orignalRequestNum = '' then
         begin
-                raise EPopbillException.Create(-99999999, '원본 팩스의 전송요청번호(orignalRequestNum)가 입력되지 않았습니다.');
-                Exit;
+                if FIsThrowException then
+                begin
+                        raise EPopbillException.Create(-99999999, '원본 팩스의 전송요청번호(orignalRequestNum)가 입력되지 않았습니다.');
+                        Exit;
+                end
+                else
+                begin
+                        result := '';
+                        setLastErrCode(-99999999);
+                        setLastErrMessage('원본 팩스의 전송요청번호(orignalRequestNum)가 입력되지 않았습니다.');
+                        exit;
+                end;
         end;
 
         // ResendFax 호출시 기존전송정보로 전송하는 JsonString 구성
@@ -1049,9 +1411,18 @@ begin
 
         requestJson := requestJson + '}';
 
-        responseJson := httppost('/FAX/Resend/'+ orignalRequestNum, CorpNum, UserID, requestJson);
-
-        result := getJSonString(responseJson,'receiptNum');
+        try
+                responseJson := httppost('/FAX/Resend/'+ orignalRequestNum, CorpNum, UserID, requestJson);
+                result := getJSonString(responseJson,'receiptNum');
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end;
+                end;
+        end;
 end;
 
 
