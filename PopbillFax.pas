@@ -350,7 +350,7 @@ end;
 
 function TFaxService.Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; Order : String; UserID : String) :TFaxSearchList;
 begin
-        Search(CorpNum, SDate, EDate, State, ReserveYN, SenderOnly, Page, PerPage, Order, '', UserID);
+        result := Search(CorpNum, SDate, EDate, State, ReserveYN, SenderOnly, Page, PerPage, Order, '', UserID);
 end;
 
 function TFaxService.Search(CorpNum, SDate, EDate: String; State: array of String; ReserveYN, SenderOnly: boolean; Page, PerPage: Integer; Order, QString, UserID: String): TFaxSearchList;
