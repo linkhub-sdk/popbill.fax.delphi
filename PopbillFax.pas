@@ -9,7 +9,7 @@
 * Author : Kim Seongjun (pallet027@gmail.com)
 * Contributor : Jeong Yohan (code@linkhub.co.kr)
 * Written : 2014-04-08
-* Updated : 2019-05-03
+* Updated : 2022-01-07
 * Thanks for your interest. 
 *=================================================================================
 *)
@@ -43,6 +43,7 @@ type
                 sendNum : String;
                 senderName : String;
                 receiveNum : String;
+                receiveNumType : String;
                 receiveName : String;
                 title : String;
                 sendPageCnt : Integer;
@@ -444,6 +445,7 @@ begin
                         result.list[i].sendNum := getJSonString(jsons[i],'sendNum');
                         result.list[i].senderName := getJSonString(jsons[i],'senderName');
                         result.list[i].receiveNum := getJSonString(jsons[i],'receiveNum');
+                        result.list[i].receiveNumType := getJSonString(jsons[i],'receiveNumType');
                         result.list[i].receiveName := getJSonString(jsons[i],'receiveName');
                         result.list[i].title := getJSonString(jsons[i],'title');
                         result.list[i].sendPageCnt := getJSonInteger(jsons[i],'sendPageCnt');
@@ -965,6 +967,7 @@ begin
                         result[i].sendNum := getJSonString(jsons[i],'sendNum');
                         result[i].senderName := getJSonString(jsons[i],'senderName');
                         result[i].receiveNum := getJSonString(jsons[i],'receiveNum');
+                        result[i].receiveNumType := getJSonString(jsons[i],'receiveNumType');
                         result[i].receiveName := getJSonString(jsons[i],'receiveName');
                         result[i].title := getJSonString(jsons[i],'title');
                         result[i].sendPageCnt := getJSonInteger(jsons[i],'sendPageCnt');
@@ -1249,6 +1252,7 @@ begin
                         result[i].sendNum := getJSonString(jsons[i],'sendNum');
                         result[i].senderName := getJSonString(jsons[i],'senderName');
                         result[i].receiveNum := getJSonString(jsons[i],'receiveNum');
+                        result[i].receiveNumType := getJSonString(jsons[i],'receiveNumType');
                         result[i].receiveName := getJSonString(jsons[i],'receiveName');
                         result[i].title := getJSonString(jsons[i],'title');
                         result[i].sendPageCnt := getJSonInteger(jsons[i],'sendPageCnt');
