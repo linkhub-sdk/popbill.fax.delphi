@@ -7,7 +7,7 @@
 *
 * http://www.popbill.com
 * Author : Kim Seongjun (pallet027@gmail.com)
-* Contributor : Jeong Yohan (code@linkhub.co.kr)
+* Contributor : Jeong Yohan (code@linkhubcorp.com)
 * Written : 2014-04-08
 * Updated : 2022-01-07
 * Thanks for your interest. 
