@@ -100,7 +100,8 @@ type
                 constructor Create(LinkID : String; SecretKey : String);
 
                 //회원별 전송 단가 확인.
-                function GetUnitCost(CorpNum : String) : Single;
+                function GetUnitCost(CorpNum : String) : Single; overload;
+                function GetUnitCost(CorpNum : String; ReceiveNumType : string; UserID : string = '') : Single; overload;
 
                 //팩스전송 단일파일 단일 수신자.
                 function SendFAX(CorpNum : String; sendnum : String; receiveNum : String; receiveName : String; filePath : String; reserveDT : String; UserID:String) : String; overload;
@@ -180,7 +181,8 @@ type
                 function Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer;Order : String; QString : String; UserID : String) : TFaxSearchList; overload;
 
                 // 과금정보 확인
-                function GetChargeInfo(CorpNum : String) : TFaxChargeInfo;
+                function GetChargeInfo(CorpNum : String) : TFaxChargeInfo; overload;
+                function GetChargeInfo(CorpNum : String; ReceiveNumType : String; UserID : String = '') : TFaxChargeInfo; overload;
 
                 // 발신번호 목록 조회
                 function GetSenderNumberList(CorpNum : String; UserID : String = '') : TFAXSenderNumberList;
@@ -211,79 +213,7 @@ constructor TFaxService.Create(LinkID : String; SecretKey : String);
 begin
        inherited Create(LinkID,SecretKey);
        AddScope('160');
-end;
-
-function TFaxService.GetUnitCost(CorpNum : String) : Single;
-var
-        responseJson : string;
-begin
-        try
-                responseJson := httpget('/FAX/UnitCost',CorpNum,'');
-        except
-                on le : EPopbillException do begin
-                        if FIsThrowException then
-                        begin
-                                raise EPopbillException.Create(le.code,le.message);
-                                exit;
-                        end
-                        else
-                        begin
-                                result := 0.0;
-                                exit;
-                        end;
-                end;
-        end;
-
-        if LastErrCode <> 0 then
-        begin
-                exit;
-        end
-        else
-        begin
-                result := strToFloat(getJSonString( responseJson,'unitCost'));
-                exit;
-        end;       
-end;
-
-function TFaxService.GetChargeInfo (CorpNum : string) : TFaxChargeInfo;
-var
-        responseJson : String;
-begin
-        try
-                responseJson := httpget('/FAX/ChargeInfo',CorpNum,'');
-        except
-                on le : EPopbillException do begin
-                        if FIsThrowException then
-                        begin
-                                raise EPopbillException.Create(le.code,le.message);
-                                exit;
-                        end;
-                end;
-        end;
-
-        try
-                result := TFaxChargeInfo.Create;
-
-                result.unitCost := getJSonString(responseJson, 'unitCost');
-                result.chargeMethod := getJSonString(responseJson, 'chargeMethod');
-                result.rateSystem := getJSonString(responseJson, 'rateSystem');
-
-        except
-                on E:Exception do begin
-                        if FIsThrowException then
-                        begin
-                                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
-                                exit;
-                        end
-                        else
-                        begin
-                                result := TFaxChargeInfo.Create;
-                                setLastErrCode(-99999999);
-                                setLastErrMessage('결과처리 실패.[Malformed Json]');
-                                exit;
-                        end;
-                end;
-        end;
+       AddScope('161');
 end;
 
 function UrlEncodeUTF8(stInput : widestring) : string;
@@ -357,6 +287,90 @@ function UrlEncodeUTF8(stInput : widestring) : string;
      end;
    end;
    result := (stEncoded);
+end;
+
+function TFaxService.GetUnitCost(CorpNum : String) : Single;
+begin
+        result := GetUnitCost(CorpNum, '', '' );
+end;
+
+function TFaxService.GetUnitCost(CorpNum : String; ReceiveNumType : string; UserID : string = '') : Single;
+var
+        responseJson : string;
+begin
+        try
+                responseJson := httpget('/FAX/UnitCost?receiveNumType=' + UrlEncodeUTF8(ReceiveNumType),CorpNum,UserID);
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end
+                        else
+                        begin
+                                result := 0.0;
+                                exit;
+                        end;
+                end;
+        end;
+
+        if LastErrCode <> 0 then
+        begin
+                exit;
+        end
+        else
+        begin
+                result := strToFloat(getJSonString( responseJson,'unitCost'));
+                exit;
+        end;       
+end;
+
+function TFaxService.GetChargeInfo (CorpNum : string) : TFaxChargeInfo;
+begin
+        result := GetChargeInfo(CorpNum, '', '');
+end;
+
+function TFaxService.GetChargeInfo (CorpNum : string; ReceiveNumType : string; UserID : string = '') : TFaxChargeInfo;
+var
+        uri          : String;
+        responseJson : String;
+begin
+        try
+                responseJson := httpget('/FAX/ChargeInfo?receiveNumType=' + UrlEncodeUTF8(ReceiveNumType),CorpNum,UserID);
+        except
+                on le : EPopbillException do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(le.code,le.message);
+                                exit;
+                        end;
+                end;
+        end;
+
+        try
+                result := TFaxChargeInfo.Create;
+
+                result.unitCost := getJSonString(responseJson, 'unitCost');
+                result.chargeMethod := getJSonString(responseJson, 'chargeMethod');
+                result.rateSystem := getJSonString(responseJson, 'rateSystem');
+
+        except
+                on E:Exception do begin
+                        if FIsThrowException then
+                        begin
+                                raise EPopbillException.Create(-99999999,'결과처리 실패.[Malformed Json]');
+                                exit;
+                        end
+                        else
+                        begin
+                                result := TFaxChargeInfo.Create;
+                                setLastErrCode(-99999999);
+                                setLastErrMessage('결과처리 실패.[Malformed Json]');
+                                exit;
+                        end;
+                end;
+        end;
 end;
 
 function TFaxService.Search(CorpNum : String; SDate : String; EDate : String; State : Array Of String; ReserveYN : boolean; SenderOnly : boolean; Page : Integer; PerPage : Integer; Order : String; UserID : String) :TFaxSearchList;
