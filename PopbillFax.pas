@@ -9,7 +9,7 @@
 * Author : Kim Seongjun
 * Contributor : Jeong Yohan (code@linkhubcorp.com)
 * Written : 2014-04-08
-* Updated : 2022-04-07
+* Updated : 2022-07-25
 * Thanks for your interest. 
 *=================================================================================
 *)
@@ -33,6 +33,7 @@ type
         public
                 receiveNum : String;
                 receiveName : String;
+                interOPRefKey : String;
         end;
         TReceiverList = Array of TReceiver;
 
@@ -64,6 +65,8 @@ type
                 sendState : Integer;
                 convState : Integer;
                 sendResult : Integer;
+
+                interOPRefKey : String;
                 destructor Destroy; override;
         end;
 
@@ -470,6 +473,8 @@ begin
                         result.list[i].convState := getJSonInteger(jsons[i],'convState');
                         result.list[i].sendResult := getJSonInteger(jsons[i],'sendResult');
 
+                        result.list[i].interOPRefKey := getJSonString(jsons[i],'interOPRefKey');
+
                 end;
         except
                 on E:Exception do begin
@@ -767,7 +772,8 @@ begin
         for i:=0 to Length(receivers) -1 do begin
                 requestJson := requestJson + '{';
                 requestJson := requestJson + '"rcv":"'+receivers[i].receiveNum+'",';
-                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'"';
+                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'",';
+                requestJson := requestJson + '"interOPRefKey":"'+receivers[i].interOPRefKey+'"';
                 requestJson := requestJson + '}';
                 if i < Length(receivers) - 1 then requestJson := requestJson + ',';
         end;
@@ -878,7 +884,10 @@ begin
                                 requestJson := requestJson + '"rcv":"'+receivers[i].receiveNum+'",';
 
                         if receivers[i].receiveName <> '' then
-                                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'"';
+                                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'",';
+
+                        if receivers[i].interOPRefKey <> '' then
+                                requestJson := requestJson + '"interOPRefKey":"'+receivers[i].interOPRefKey+'"';
 
                         requestJson := requestJson + '}';
 
@@ -991,6 +1000,7 @@ begin
                         result[i].sendState := getJSonInteger(jsons[i],'sendState');
                         result[i].convState := getJSonInteger(jsons[i],'convState');
                         result[i].sendResult := getJSonInteger(jsons[i],'sendResult');
+                        result[i].interOPRefKey := getJSonString(jsons[i],'interOPRefKey');
                 end;
 
         except
@@ -1327,6 +1337,7 @@ begin
                         result[i].sendState := getJSonInteger(jsons[i],'sendState');
                         result[i].convState := getJSonInteger(jsons[i],'convState');
                         result[i].sendResult := getJSonInteger(jsons[i],'sendResult');
+                        result[i].interOPRefKey := getJSonString(jsons[i],'interOPRefKey');
                 end;
 
         except
@@ -1500,7 +1511,10 @@ begin
                                 requestJson := requestJson + '"rcv":"'+receivers[i].receiveNum+'",';
 
                         if receivers[i].receiveName <> '' then
-                                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'"';
+                                requestJson := requestJson + '"rcvnm":"'+receivers[i].receiveName+'",';
+
+                        if receivers[i].interOPRefKey <> '' then
+                                requestJson := requestJson + '"interOPRefKey":"'+receivers[i].interOPRefKey+'"';
 
                         requestJson := requestJson + '}';
 
